@@ -158,20 +158,19 @@ begin
 
   FPosition := FGetPosition();
 
-  Exponential := Hypot(FPosition.X - Destination.X, FPosition.Y - Destination.Y);
-  Exponential := Power(Exponential, 0.30);
+  Exponential := Power(Hypot(FPosition.X - Destination.X, FPosition.Y - Destination.Y), 0.33) / 10;
 
   Speed := TruncatedGauss(Speed, Speed * 1.5);
-  Speed += Exponential;
+  Speed *= Exponential;
   Speed /= 10;
 
   FDestination := Destination;
   FGravity := Gravity;
   FWind := Wind;
-  FMinWait := 10 / Speed;
-  FMaxWait := 20 / Speed;
+  FMinWait := 5 / Speed;
+  FMaxWait := 10 / Speed;
   FMaxStep := 20 * Speed;
-  FTargetArea := 50 * Speed;
+  FTargetArea := 20 * Speed;
   FAccuracy := Accuracy;
   FMoving := True;
 
@@ -181,7 +180,7 @@ end;
 procedure TASyncMouseThread.WaitMoving;
 begin
   while FMoving do
-    Sleep(20);
+    Sleep(25);
 end;
 
 constructor TASyncMouseThread.Create(Teleport: TASyncMouse_Teleport; GetPosition: TASyncMouse_GetPosition);

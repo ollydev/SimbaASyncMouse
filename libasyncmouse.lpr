@@ -22,13 +22,14 @@ type
 
 procedure Lape_ASyncMouse_Create(const Params: PParamArray; const Result: Pointer); cdecl;
 var
-  Mouse: PASyncMouse;
+  Mouse: PASyncMouse absolute Result;
 begin
-  Mouse := PASyncMouse(Result);
   Mouse^.Thread := TASyncMouseThread.Create(TASyncMouse_Teleport(PPointer(Params^[0])^), TASyncMouse_GetPosition(PPointer(Params^[1])^));
-  Mouse^.Speed := 6;
-  Mouse^.Gravity := 10;
-  Mouse^.Wind := 8;
+
+  // Default values (ame as SRL)
+  Mouse^.Speed := 12;
+  Mouse^.Gravity := 9;
+  Mouse^.Wind := 5;
 end;
 
 procedure Lape_ASyncMouse_Free(const Params: PParamArray); cdecl;
@@ -87,19 +88,19 @@ begin
   addGlobalFunc('procedure TASyncMouse.WaitMoving; native;', @Lape_ASyncMouse_WaitMoving);
   addGlobalFunc('function TASyncMouse.IsMoving: Boolean; native;', @Lape_ASyncMouse_IsMoving);
 
-  addCode('procedure TASyncMouse.Teleport(X, Y: Int32); static;'                                              + LineEnding +
-          'begin'                                                                                             + LineEnding +
-          '  MoveMouse(X, Y);'                                                                                + LineEnding +
-          'end;'                                                                                              + LineEnding +
-          ''                                                                                                  + LineEnding +
-          'function TASyncMouse.GetPosition: TPoint; static;'                                                 + LineEnding +
-          'begin'                                                                                             + LineEnding +
-          '  GetMousePos(Result.X, Result.Y);'                                                                + LineEnding +
-          'end;'                                                                                              + LineEnding +
-          ''                                                                                                  + LineEnding +
-          'var'                                                                                               + LineEnding +
-          '  ASyncMouse: TASyncMouse := TASyncMouse.Create(@TASyncMouse.Teleport, @TASyncMouse.GetPosition);' + LineEnding +
-          'begin'                                                                                             + LineEnding +
-          '  AddOnTerminate(@ASyncMouse.Free);'                                                               + LineEnding +
+  addCode('procedure TASyncMouse.Teleport(X, Y: Int32); static;'                                           + LineEnding +
+          'begin'                                                                                          + LineEnding +
+          '  MoveMouse(X, Y);'                                                                             + LineEnding +
+          'end;'                                                                                           + LineEnding +
+          ''                                                                                               + LineEnding +
+          'function TASyncMouse.Position: TPoint; static;'                                                 + LineEnding +
+          'begin'                                                                                          + LineEnding +
+          '  GetMousePos(Result.X, Result.Y);'                                                             + LineEnding +
+          'end;'                                                                                           + LineEnding +
+          ''                                                                                               + LineEnding +
+          'var'                                                                                            + LineEnding +
+          '  ASyncMouse: TASyncMouse := TASyncMouse.Create(@TASyncMouse.Teleport, @TASyncMouse.Position);' + LineEnding +
+          'begin'                                                                                          + LineEnding +
+          '  AddOnTerminate(@ASyncMouse.Free);'                                                            + LineEnding +
           'end;');
 end.
