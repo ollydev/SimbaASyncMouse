@@ -70,6 +70,7 @@ procedure TASyncMouseThread.Execute;
     x, y: Double;
     veloX, veloY, windX, windY, veloMag, randomDist, step, idle: Double;
     traveledDistance, remainingDistance: Double;
+    t: UInt64;
   begin
     windX := 0;
     windY := 0;
@@ -79,8 +80,16 @@ procedure TASyncMouseThread.Execute;
     x := Position.X;
     y := Position.Y;
 
+    t := GetTickCount();
+
     while Moving do
     begin
+      if GetTickCount() > (t + 15000) then
+      begin
+        WriteLn('Something went wrong. AsyncMouse movement did not complete in 15 seconds.');
+        Break;
+      end;
+
       traveledDistance := Hypot(x - Position.X, y - Position.Y);
       remainingDistance := Hypot(x - Destination.X, y - Destination.Y);
       if (remainingDistance <= Max(1, Accuracy)) then
