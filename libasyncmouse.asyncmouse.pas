@@ -84,7 +84,7 @@ procedure TASyncMouseThread.Execute;
 
     while Moving do
     begin
-      if GetTickCount() > t + 15000 then
+      if GetTickCount() > (t + 15000) then
       begin
         WriteLn('Something went wrong. AsyncMouse movement did not complete in 15 seconds.');
         Break;
